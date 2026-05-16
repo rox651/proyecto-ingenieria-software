@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VoiceLoop Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>VoiceLoop</h1>
+        <p class="subtitle">Mic → STT → LLM → TTS → Speaker</p>
+      </header>
+
+      <section class="status-card">
+        <h2>Estado</h2>
+        <dl>
+          <dt>Pipeline</dt>
+          <dd id="state">—</dd>
+          <dt>Turnos</dt>
+          <dd id="turns">—</dd>
+        </dl>
+        <div class="actions">
+          <button id="btn-turn" type="button">Ejecutar turno</button>
+          <button id="btn-refresh" type="button" class="secondary">Actualizar</button>
+        </div>
+      </section>
+
+      <section class="history-card">
+        <h2>Historial</h2>
+        <ul id="history"></ul>
+      </section>
+    </main>
+    <script src="app.js"></script>
+  </body>
+</html>
