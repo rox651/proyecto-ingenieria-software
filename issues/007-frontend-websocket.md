@@ -2,6 +2,7 @@
 title: Real-time dashboard updates via WebSocket
 priority: feature
 afk: true
+blocked_by: 003
 ---
 
 # Issue 007 — Frontend en tiempo real

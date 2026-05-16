@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 from voiceloop.protocols import (
     AudioCapture,
@@ -25,7 +25,7 @@ from voiceloop.stubs import (
 logger = logging.getLogger(__name__)
 
 
-class PipelineState(str, Enum):
+class PipelineState(StrEnum):
     IDLE = "idle"
     LISTENING = "listening"
     THINKING = "thinking"

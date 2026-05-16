@@ -3,6 +3,7 @@ title: Streaming pipeline with asyncio queues
 priority: tracer-bullet
 afk: false
 hitl: true
+blocked_by: 001 002 003 004 005
 ---
 
 # Issue 006 — Pipeline en streaming

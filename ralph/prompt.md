@@ -24,9 +24,13 @@ Prefer issues tagged `afk: true` in the frontmatter. Skip issues tagged `hitl: t
    - `pip install -e ".[dev]"` (first time)
    - `pytest`
    - `ruff check src tests`
-5. Commit with a clear message describing *why*, not only *what*.
-6. Move completed issues to `issues/done/` and add a short completion note at the bottom.
+5. Commit with issue-linked messages: `feat(#NNN): <why-focused description>`
+6. Move completed issues to `issues/done/` and add a completion note.
 7. If incomplete, append a `## Progress` section to the issue with what remains.
+
+## Issue targeting
+
+If the user ran `./ralph/once.sh <ID>`, work **only** on that issue. Check `blocked_by` in frontmatter; if blockers are still in `issues/`, stop and report.
 
 ## Rules
 

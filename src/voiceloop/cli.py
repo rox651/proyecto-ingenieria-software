@@ -4,12 +4,18 @@ import argparse
 import asyncio
 import logging
 
-from voiceloop.pipeline import VoicePipeline
+from voiceloop.factory import create_pipeline
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="VoiceLoop — asyncio voice agent")
     parser.add_argument("--turns", type=int, default=1, help="Max conversational turns")
+    parser.add_argument(
+        "--mode",
+        choices=("stub", "live"),
+        default="stub",
+        help="Pipeline mode: stub (default) or live components",
+    )
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
 
@@ -18,7 +24,7 @@ def main() -> None:
         format="%(levelname)s %(name)s: %(message)s",
     )
 
-    pipeline = VoicePipeline()
+    pipeline = create_pipeline(args.mode)  # type: ignore[arg-type]
     results = asyncio.run(pipeline.run(max_turns=args.turns))
 
     for i, turn in enumerate(results, 1):

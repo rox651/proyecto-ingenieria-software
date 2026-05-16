@@ -1,6 +1,5 @@
 """Stub implementations for development without hardware or API keys."""
 
-from voiceloop.protocols import AudioCapture, AudioPlayback, LanguageModel, SpeechToText, TextToSpeech
 
 
 class StubAudioCapture:

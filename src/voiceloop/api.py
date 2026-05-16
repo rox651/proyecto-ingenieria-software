@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from voiceloop.config import settings
+from voiceloop.factory import create_pipeline, resolve_mode
 from voiceloop.pipeline import PipelineState, TurnResult, VoicePipeline
 
 _pipeline: VoicePipeline | None = None
@@ -31,7 +31,7 @@ class TurnResponse(BaseModel):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _pipeline
-    _pipeline = VoicePipeline()
+    _pipeline = create_pipeline(resolve_mode())
     yield
     if _pipeline:
         _pipeline.request_stop()

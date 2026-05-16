@@ -2,6 +2,7 @@
 title: Speaker playback for synthesized audio
 priority: feature
 afk: true
+blocked_by: 004
 ---
 
 # Issue 005 — Audio playback (altavoz)

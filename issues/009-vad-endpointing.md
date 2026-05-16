@@ -3,6 +3,7 @@ title: Voice activity detection and turn endpointing
 priority: feature
 afk: false
 hitl: true
+blocked_by: 001
 ---
 
 # Issue 009 — VAD y detección de fin de turno
