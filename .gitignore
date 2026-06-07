@@ -13,6 +13,9 @@ build/
 .coverage
 htmlcov/
 .DS_Store
+node_modules/
+docs/.vitepress/dist
+docs/.vitepress/cache
 *.wav
 *.mp3
 issues/done/*.md

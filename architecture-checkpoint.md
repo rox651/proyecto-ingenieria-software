@@ -87,10 +87,14 @@ pipeline = container.resolve("pipeline")
 
 ---
 
-## 5. Próximo ciclo Ralph
+## 5. Estado final (Tarea 3)
 
-Issues desbloqueados: **#007** (WebSocket, `blocked_by: 003`), **#009** (VAD, `blocked_by: 001`).
+Todos los issues `#001–#009` completados. Pipeline con colas, WebSocket, VAD, factory live.
 
-```bash
-./ralph/once.sh 007
-```
+**Verificación final:** `pytest -v` (23 passed), Software Journey desplegado en GitHub Pages.
+
+---
+
+## 6. Próximo ciclo Ralph
+
+Proyecto cerrado para el semestre. Mantener factory como seam único si se añaden providers.

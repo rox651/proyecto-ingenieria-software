@@ -8,7 +8,19 @@ Agente de voz conversacional mínimo en **Python + asyncio** para entender la ar
 Micrófono → STT → LLM → TTS → Altavoz
 ```
 
-Incluye **backend** (pipeline asyncio + API FastAPI) y **frontend** (dashboard web).
+Incluye **backend** (pipeline asyncio + API FastAPI + WebSocket) y **frontend** (dashboard en tiempo real).
+
+## Software Journey (Tarea 3 — entrega final)
+
+**Sitio de documentación:** https://rox651.github.io/proyecto-ingenieria-software/
+
+Análisis arquitectónico con terminología de John Ousterhout (*A Philosophy of Software Design*):
+
+1. [Bala Trazadora y Skills](./docs/journey/tracer-bullet.md)
+2. [Módulos Profundos vs Superficiales](./docs/journey/anatomy.md)
+3. [Veredicto Retrospectivo](./docs/journey/retrospective.md)
+
+Desarrollo local del sitio: `npm ci && npm run docs:dev`
 
 ## Client Brief
 
@@ -25,12 +37,16 @@ Ver [CLIENT_BRIEF.md](./CLIENT_BRIEF.md) para problema, usuarios, alcance y crit
 │   ├── stubs.py             # Implementaciones stub para desarrollo
 │   ├── factory.py           # Composición stub/live (checkpoint arquitectura)
 │   ├── llm/                 # Cliente OpenAI-compatible
-│   ├── audio/               # Captura de micrófono
-│   ├── api.py               # FastAPI — control de sesiones
+│   ├── stt/                 # faster-whisper
+│   ├── tts/                 # edge-tts
+│   ├── vad/                 # detección de voz
+│   ├── events.py            # EventBus → WebSocket
+│   ├── api.py               # FastAPI — REST + /ws/session
 │   └── config.py            # Configuración (pydantic-settings)
-├── frontend/                # Dashboard HTML/JS
-├── tests/                   # pytest + pytest-asyncio
-├── issues/                  # Backlog para el agente (markdown)
+├── docs/                    # VitePress — Software Journey
+├── frontend/                # Dashboard WebSocket + polling fallback
+├── tests/                   # 23 tests (unit + E2E + WebSocket)
+├── issues/done/             # Todos los issues completados (#001–#009)
 ├── handoffs.md              # Bitácora de transferencia entre sesiones
 ├── architecture-checkpoint.md
 ├── ralph/                   # Prompt e instrucciones del agente AFK
@@ -92,25 +108,13 @@ Este proyecto sigue el flujo descrito en [Running Your AFK Agent](https://www.ai
 
 En **Cursor Agent:** completar el issue indicado. Commit: `feat(#007): descripción`.
 
-## Estado actual
+## Estado del proyecto (completo)
 
-- [x] Pipeline asyncio + factory `stub`/`live`
-- [x] API REST + frontend básico
-- [x] CI GitHub Actions (#008)
-- [x] LLM OpenAI-compatible (#003)
-- [x] Captura micrófono sounddevice (#001)
-- [x] Checkpoint arquitectónico (`factory.py`)
-- [ ] STT faster-whisper (#002)
-- [ ] TTS edge-tts (#004) → desbloquea #005
-- [ ] WebSocket dashboard (#007) — **desbloqueado**
-
-## Issues en GitHub
-
-Los archivos en `issues/` deben publicarse también como **GitHub Issues** para la entrega. Ejemplo:
-
-```bash
-gh issue create --title "Audio capture with sounddevice" --body-file issues/001-audio-capture-sounddevice.md
-```
+- [x] Pipeline asyncio con colas (#006) + VAD (#009)
+- [x] STT faster-whisper (#002), LLM (#003), TTS edge (#004), playback (#005)
+- [x] Captura micrófono (#001), WebSocket dashboard (#007)
+- [x] CI (#008), factory arquitectónica, 23 tests passing
+- [x] Software Journey desplegado en GitHub Pages
 
 ## Licencia
 

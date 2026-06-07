@@ -1,38 +1,36 @@
 # Bitácora de Transferencia (Handoffs)
 
 Resúmenes compactos generados entre sesiones de agente para mitigar ruido de tokens.
-Usar la skill `.cursor/skills/handoff/SKILL.md` antes de abrir un chat nuevo.
 
 ---
 
 ## Handoff — 2026-05-16 (post issues #008, #003, #001)
 
 ### Built
-- `#008` CI: `.github/workflows/ci.yml` (pytest + ruff en push/PR)
-- `#003` LLM: `src/voiceloop/llm/openai_client.py` + tests con `httpx.MockTransport`
-- `#001` Audio: `src/voiceloop/audio/capture.py` (`SoundDeviceCapture`, executor async)
-- Checkpoint: `src/voiceloop/factory.py` — composición `stub` / `live`
-
-### Architecture decisions
-- Protocolos en `protocols.py`; implementaciones por paquete (`llm/`, `audio/`)
-- `VOICELOOP_MODE` / `--mode` selecciona stub vs live
-- Live LLM solo si `OPENAI_API_KEY` está definida; mic requiere `sounddevice` opcional
-
-### Tests / CI
-- 14 tests locales en verde; CI en GitHub Actions (Python 3.11)
-
-### Pending (exact)
-| ID | Estado | blocked_by |
-|----|--------|------------|
-| 002 | open | — |
-| 004 | open | — |
-| 005 | open | 004 |
-| 006 | open | 001–005 (001 ✅ → parcialmente desbloqueado) |
-| 007 | open | 003 ✅ **UNBLOCKED** |
-| 009 | open | 001 ✅ **UNBLOCKED** |
+- `#008` CI, `#003` LLM, `#001` mic, `factory.py`
 
 ### Next Ralph target
-```bash
-./ralph/once.sh 007
-```
-WebSocket dashboard — `#003` cerrado, dependencia satisfecha.
+`./ralph/once.sh 007`
+
+---
+
+## Handoff — 2026-06-07 (entrega final Tarea 3)
+
+### Built
+- `#002` WhisperSTT, `#004` EdgeTTS, `#005` SoundDevicePlayback
+- `#006` pipeline con asyncio.Queue (5 workers)
+- `#007` WebSocket `/ws/session` + EventBus
+- `#009` EnergyVAD en modo live
+- E2E: `tests/test_e2e.py`, `tests/test_websocket.py` (23 tests total)
+- Docs: VitePress Software Journey en `/docs`
+
+### Architecture decisions
+- Eventos de dominio (`transcript`, `response`) — sin leakage OpenAI al frontend
+- Factory absorbió todos los providers live
+
+### Pending
+- Ningún issue en `issues/` — todos en `issues/done/`
+
+### URLs entrega
+- Repo: https://github.com/rox651/proyecto-ingenieria-software
+- Journey: https://rox651.github.io/proyecto-ingenieria-software/
