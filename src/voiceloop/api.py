@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from contextlib import asynccontextmanager
 from typing import Any
 
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -15,6 +16,7 @@ from voiceloop.pipeline import PipelineState, TurnResult, VoicePipeline
 
 _pipeline: VoicePipeline | None = None
 _run_task: asyncio.Task[list[TurnResult]] | None = None
+_ws_clients: set[WebSocket] = set()
 
 
 class SessionStatus(BaseModel):
@@ -28,16 +30,30 @@ class TurnResponse(BaseModel):
     assistant_text: str
 
 
+async def _broadcast_event(event: str, **payload: Any) -> None:
+    message = json.dumps({"event": event, **payload})
+    dead: list[WebSocket] = []
+    for ws in list(_ws_clients):
+        try:
+            await ws.send_text(message)
+        except Exception:
+            dead.append(ws)
+    for ws in dead:
+        _ws_clients.discard(ws)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _pipeline
     _pipeline = create_pipeline(resolve_mode())
+    _pipeline.events.subscribe(_broadcast_event)
     yield
     if _pipeline:
         _pipeline.request_stop()
     global _run_task
     if _run_task and not _run_task.done():
         _run_task.cancel()
+    _ws_clients.clear()
 
 
 app = FastAPI(
@@ -102,6 +118,23 @@ async def stop_session() -> dict[str, str]:
     p = _require_pipeline()
     p.request_stop()
     return {"message": "stop requested"}
+
+
+@app.websocket("/ws/session")
+async def websocket_session(websocket: WebSocket) -> None:
+    await websocket.accept()
+    _ws_clients.add(websocket)
+    p = _require_pipeline()
+    try:
+        await websocket.send_json(
+            {"event": "state_change", "state": p.state.value},
+        )
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        pass
+    finally:
+        _ws_clients.discard(websocket)
 
 
 def _require_pipeline() -> VoicePipeline:
