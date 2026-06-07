@@ -15,8 +15,8 @@ class StubAudioCapture:
         await asyncio.sleep(0.01)
         self._ticks += 1
         # Simulate speech after a few chunks (stub for end-to-end demos)
-        if self._ticks > 2:
-            return b"\x01" * self._chunk_size
+        if self._ticks > 2 and self._ticks < 8:
+            return (b"\x7f\xff" * (self._chunk_size // 2))[: self._chunk_size]
         return b"\x00" * self._chunk_size
 
 
