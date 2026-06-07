@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     voiceloop_port: int = 8000
     sample_rate: int = 16000
     channels: int = 1
+    whisper_model: str = "tiny"
+    tts_voice: str = "es-MX-DaliaNeural"
+    vad_energy_threshold: float = 50.0
+    vad_silence_ms: int = 700
+    chunk_duration_ms: int = 100
 
 
 settings = Settings()
