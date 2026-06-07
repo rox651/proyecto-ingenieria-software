@@ -7,6 +7,13 @@ from typing import Literal
 
 from voiceloop.config import settings
 from voiceloop.pipeline import VoicePipeline
+from voiceloop.protocols import (
+    AudioCapture,
+    AudioPlayback,
+    LanguageModel,
+    SpeechToText,
+    TextToSpeech,
+)
 from voiceloop.stubs import (
     StubAudioCapture,
     StubAudioPlayback,
@@ -36,14 +43,20 @@ def create_pipeline(mode: PipelineMode | None = None) -> VoicePipeline:
             llm=StubLanguageModel(),
             tts=StubTextToSpeech(),
             playback=StubAudioPlayback(),
+            use_vad=False,
         )
 
     return _create_live_pipeline()
 
 
-def _create_live_pipeline() -> VoicePipeline:
-    from voiceloop.protocols import AudioCapture, LanguageModel
+def _try_import(name: str, factory):
+    try:
+        return factory()
+    except ImportError:
+        return None
 
+
+def _create_live_pipeline() -> VoicePipeline:
     llm: LanguageModel = StubLanguageModel()
     if settings.openai_api_key:
         from voiceloop.llm.openai_client import OpenAILanguageModel
@@ -51,17 +64,38 @@ def _create_live_pipeline() -> VoicePipeline:
         llm = OpenAILanguageModel()
 
     capture: AudioCapture = StubAudioCapture()
-    try:
-        from voiceloop.audio.capture import SoundDeviceCapture
+    sd_capture = _try_import("sounddevice", lambda: __import__(
+        "voiceloop.audio.capture", fromlist=["SoundDeviceCapture"]
+    ).SoundDeviceCapture())
+    if sd_capture is not None:
+        capture = sd_capture
 
-        capture = SoundDeviceCapture()
-    except ImportError:
-        pass
+    stt: SpeechToText = StubSpeechToText()
+    whisper = _try_import("faster_whisper", lambda: __import__(
+        "voiceloop.stt.whisper", fromlist=["WhisperSTT"]
+    ).WhisperSTT())
+    if whisper is not None:
+        stt = whisper
+
+    tts: TextToSpeech = StubTextToSpeech()
+    edge = _try_import("edge_tts", lambda: __import__(
+        "voiceloop.tts.edge", fromlist=["EdgeTTS"]
+    ).EdgeTTS())
+    if edge is not None:
+        tts = edge
+
+    playback: AudioPlayback = StubAudioPlayback()
+    sd_playback = _try_import("sounddevice", lambda: __import__(
+        "voiceloop.audio.playback", fromlist=["SoundDevicePlayback"]
+    ).SoundDevicePlayback())
+    if sd_playback is not None:
+        playback = sd_playback
 
     return VoicePipeline(
         capture=capture,
-        stt=StubSpeechToText(),
+        stt=stt,
         llm=llm,
-        tts=StubTextToSpeech(),
-        playback=StubAudioPlayback(),
+        tts=tts,
+        playback=playback,
+        use_vad=True,
     )
